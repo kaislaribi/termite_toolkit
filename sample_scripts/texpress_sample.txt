@@ -1,0 +1,7 @@
+This is a sample file for running texpress over.
+breast cancer has BRCA1 associated.
+cystic fibrosis has CFTR associated with it.
+polycystic kidney disease is associated with mutations in either PKD1 or PKD2.
+tay-sachs disease is associated with HEXA.
+huntington's disease is associated with mutations in the HTT gene.
+marfan syndrome FBN1.
