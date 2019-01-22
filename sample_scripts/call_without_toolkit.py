@@ -1,6 +1,6 @@
 """
 
-Example script for multipart call using requests.
+Example script for sending requests to TERMite without the toolkit.
 
 """""
 
@@ -12,7 +12,7 @@ __version__ = '1.0'
 
 MEDLINEZIP = "medline_sample.zip"
 TERMITE_URL = 'http://localhost:9090/termite'
-CERTIFICATE_PATH = 'PATH_TO_CERT' # or False
+CERTIFICATE_PATH = 'PATH_TO_CERT'  # or False
 
 
 def call_termite_file(zipfile, format='medline.xml', output='json'):
@@ -25,7 +25,6 @@ def call_termite_file(zipfile, format='medline.xml', output='json'):
     :return: response text
     """
 
-    url = 'http://localhost:9090/termite'
     form_data = {
         'format': format,
         'output': output,
@@ -38,7 +37,7 @@ def call_termite_file(zipfile, format='medline.xml', output='json'):
     file_obj = open(zipfile, 'rb')
     file_name = os.path.basename(zipfile)
     binary_content = {"binary": (file_name, file_obj)}
-    response = requests.post(url, data=form_data, files=binary_content, verify=CERTIFICATE_PATH)
+    response = requests.post(TERMITE_URL, data=form_data, files=binary_content, verify=CERTIFICATE_PATH)
 
     return response.text
 
