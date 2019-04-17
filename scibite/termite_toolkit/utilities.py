@@ -17,8 +17,6 @@ __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
 import requests
-from pprint import pprint
-
 
 class UtilitiesRequestBuilder():
     """
