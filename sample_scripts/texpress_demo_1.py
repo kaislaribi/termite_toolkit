@@ -12,8 +12,8 @@ Example script to call TExpress on a text string
 """
 
 __author__ = 'Joe Mullen & Michael Hughes'
-__version__ = '1.0'
-__copyright__ = '(c) 2018, SciBite Ltd'
+__version__ = '2.0'
+__copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
 from pprint import pprint

@@ -8,7 +8,7 @@ import requests
 import os
 
 __author__ = 'Joe Mullen'
-__version__ = '1.0'
+__version__ = '2.0'
 
 MEDLINEZIP = "medline_sample.zip"
 TERMITE_URL = 'http://localhost:9090/termite'
@@ -68,4 +68,4 @@ def call_termite_txt(text, format='txt', output='json'):
 
 
 print(call_termite_txt('citrate macrophage colony sildenafil stimulating factor influenza hedgehog'))
-print(call_termite_file(MEDLINEZIP))
+print(call_termite_file(MEDLINEZIP, format='docstore'))

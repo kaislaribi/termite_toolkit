@@ -7,7 +7,7 @@
  |____/ \___|_|____/|_|\__\___|   |_| |_____|_| \_\_|  |_|_|\__\___|   |_|\___/ \___/|_|_|\_\_|\__|
 
 
-Demo script making calls with text to the TERMite API
+Demo script making using the utilities functions
 
 """
 
@@ -16,30 +16,17 @@ __version__ = '2.0'
 __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
-from termite_toolkit import termite
+from termite_toolkit import utilities
 from pprint import pprint
 
+# specify termite ac API endpoint
+acapi_home = 'http://localhost:9090/termite/toolkit/autocomplete.api'
 
-# specify termite API endpoint
-termite_home = "http://localhost:9090/termite"
+# specify vocab to use
+vocab = "DRUG"
 
-# specify entities to annotate
-entities = "DRUG"
+ac_example = utilities.UtilitiesRequestBuilder()
+ac_example.set_url(acapi_home)
+ac_response = ac_example.call_autocomplete('sild', vocab)
 
-# initialise a request builder
-t = termite.TermiteRequestBuilder()
-# individually add items to your TERMite request
-t.set_url(termite_home)
-t.set_fuzzy(True)
-t.set_text("citrate macrophage colony sildenafil stimulating factor influenza hedgehog")
-t.set_entities(entities)
-t.set_subsume(True)
-t.set_input_format("txt")
-t.set_output_format("doc.jsonx")
-t.set_reject_ambiguous(False)
-t.set_options({'fragmentSize': 20})
-
-# execute the request
-termite_response = t.execute(display_request=True)
-
-pprint(termite_response)
+pprint(ac_response)

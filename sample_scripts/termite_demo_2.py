@@ -12,8 +12,8 @@ Demo script for sending a file to be annotated via the TERMite API, with some po
 """
 
 __author__ = 'Joe Mullen & Michael Hughes'
-__version__ = '1.0'
-__copyright__ = '(c) 2018, SciBite Ltd'
+__version__ = '2.0'
+__copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
 from termite_toolkit import termite
