@@ -18,13 +18,14 @@ __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Interna
 
 import requests
 
+
 class UtilitiesRequestBuilder():
     """
     Class for creating utility requests.
     """
 
     def __init__(self):
-        self.url = ''
+        self.url = 'http://localhost:9090/termite/toolkit/autocomplete.api'
         self.basic_auth = ()
         self.verify_request = True
 

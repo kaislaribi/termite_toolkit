@@ -26,7 +26,7 @@ class TermiteRequestBuilder():
     """
 
     def __init__(self):
-        self.url = ''
+        self.url = 'http://localhost:9090/termite'
         self.input_file_path = ''
         self.payload = {"output": "json"}
         self.options = {}
