@@ -19,6 +19,7 @@ __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Interna
 import requests
 from pprint import pprint
 
+
 class UtilitiesRequestBuilder():
     """
     Class for creating utility requests.
@@ -38,7 +39,7 @@ class UtilitiesRequestBuilder():
         """
         self.url = url
 
-    def set_basic_auth(self, username, password, verification=True):
+    def set_basic_auth(self, username='', password='', verification=True):
         """
         Pass basic authentication credentials.
         ** ONLY change verification if you are calling a known source **

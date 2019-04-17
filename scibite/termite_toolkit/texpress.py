@@ -34,7 +34,7 @@ class TexpressRequestBuilder():
         self.basic_auth = ()
         self.verify_request = True
 
-    def set_basic_auth(self, username, password, verification=True):
+    def set_basic_auth(self, username='', password='', verification=True):
         """
         Pass basic authentication credentials.
         **ONLY change verification if you are calling a known source**
