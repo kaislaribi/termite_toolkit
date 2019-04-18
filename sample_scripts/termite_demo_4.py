@@ -33,7 +33,6 @@ t.set_output_format("doc.jsonx")
 
 # make request
 termite_multidoc_docjsonx = t.execute(display_request=True)
-pprint(termite_multidoc_docjsonx)
 
 # do some post-processing
 termite_dataframe = termite.payload_dataframe(termite_multidoc_docjsonx, "totnosyns")

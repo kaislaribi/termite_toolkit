@@ -8,11 +8,11 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setuptools.setup(name='termite_toolkit',
-                 version='0.1.2',
+                 version='0.1.4',
                  description='Python library for calling TERMite and TExpress and processing results',
                  url='https://github.com/SciBiteLabs/termite_toolkit',
                  install_requires=[
-                     "requests>=2.8.1"
+                     "requests>=2.8.1", "pandas>=0.23.4"
                  ],
                  author='Michael Hughes & Joe Mullen',
                  author_email='joe@scibite.com',

@@ -20,6 +20,7 @@ import requests
 import os
 import pandas as pd
 
+
 class TexpressRequestBuilder():
     """
     Class for creating TEXPress requests.
@@ -86,11 +87,12 @@ class TexpressRequestBuilder():
         to_payload = ['output', 'bundle', 'pattern', 'method']
         options = []
 
-        if key in to_payload:
-            self.payload[key] = value
+        for key, value in options_dict.items():
+            if key in to_payload:
+                self.payload[key] = value
+            else:
+                options.append(key + "=" + str(value))
 
-        for k, v in options_dict.items():
-            options.append(k + "=" + str(v))
         option_string = '&'.join(options)
         if "opts" in self.payload:
             self.payload["opts"] = option_string + "&" + self.payload["opts"]
@@ -548,7 +550,6 @@ def texpress_dataframe(texpress_response, cols_to_add="", remove_subsumed=True):
     if cols_to_add:
         cols_to_add = cols_to_add.replace(" ", "").split(",")
         try:
-            df[cols_to_add]
             cols = cols + cols_to_add
             return (df[cols])
         except KeyError as e:
