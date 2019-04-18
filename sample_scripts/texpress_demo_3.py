@@ -19,12 +19,17 @@ __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Interna
 from pprint import pprint
 from termite_toolkit import texpress
 
+# specify termite API endpoint
 termite_home = "http://localhost:9090/termite"
 input_file = "medline_sample.zip"
+# specify options
 options = {"format": "medline.xml", "output": "json", "pattern": ":(INDICATION):{0,5}:(GENE)",
            "opts"  : "reverse=false"}
 
+# go annotate
 termite_json_response = texpress.annotate_files(termite_home, input_file, options)
+# get entity hits
 entity_hits = texpress.get_entity_hits_from_json(termite_json_response, score_cutoff=2)
 
+# print results
 pprint(entity_hits)

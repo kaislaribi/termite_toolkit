@@ -25,8 +25,10 @@ acapi_home = 'http://localhost:9090/termite/toolkit/autocomplete.api'
 # specify vocab to use
 vocab = "DRUG"
 
+# call autocomplete API
 ac_example = utilities.UtilitiesRequestBuilder()
 ac_example.set_url(acapi_home)
 ac_response = ac_example.call_autocomplete('sild', vocab)
 
+# print results
 pprint(ac_response)

@@ -17,8 +17,6 @@ __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
 from termite_toolkit import termite
-from pprint import pprint
-
 
 # specify termite API endpoint
 termite_home = "http://localhost:9090/termite"
@@ -43,5 +41,6 @@ t.set_options({'fragmentSize': 20})
 # execute the request
 termite_response = t.execute(display_request=True)
 
+# print result
 print(termite_response)
 

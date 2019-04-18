@@ -22,20 +22,26 @@ __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Interna
 from pprint import pprint
 from termite_toolkit import texpress
 
-input_file = "texpress_sample.txt"
+# specify termite API endpoint
 termite_home = "http://localhost:9090/termite"
+input_file = "texpress_sample.txt"
 
+# initialise a request builder
 t = texpress.TexpressRequestBuilder()
 
+# individually add items to your TExpress request
 t.set_url(termite_home)
 t.set_binary_content(input_file)
 t.set_subsume(False)
 t.set_allow_ambiguous(True)
 t.set_bundle('BiomarkerFinder')
 t.set_reverse(False)
-#t.set_options({'fragmentSize': 20})
+t.set_options({'fragmentSize': 20})
 
+# execute the request
 result = t.execute(display_request=True)
+# post-preocess
 filtered_hits = texpress.get_entity_hits_from_json(result)
 
+# print results
 pprint(filtered_hits)
