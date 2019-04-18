@@ -17,9 +17,7 @@ __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
 from termite_toolkit import termite
-import os
 
-parentDir = os.path.dirname(os.path.dirname(os.path.abspath("__file__")))
 small_input_file = "medline_sample.zip"
 
 # initialise a request builder
