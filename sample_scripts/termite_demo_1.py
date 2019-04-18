@@ -35,11 +35,12 @@ t.set_text("citrate macrophage colony sildenafil stimulating factor influenza he
 t.set_entities(entities)
 t.set_subsume(True)
 t.set_input_format("txt")
-t.set_output_format("doc.jsonx")
+t.set_output_format("tsv")
 t.set_reject_ambiguous(False)
 t.set_options({'fragmentSize': 20})
 
 # execute the request
 termite_response = t.execute(display_request=True)
 
-pprint(termite_response)
+print(termite_response)
+

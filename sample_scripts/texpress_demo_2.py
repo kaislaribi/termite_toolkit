@@ -33,6 +33,7 @@ t.set_subsume(False)
 t.set_allow_ambiguous(True)
 t.set_bundle('BiomarkerFinder')
 t.set_reverse(False)
+t.set_options({'fragmentSize': 20})
 
 result = t.execute(display_request=True)
 filtered_hits = texpress.get_entity_hits_from_json(result)

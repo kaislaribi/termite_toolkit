@@ -18,7 +18,7 @@ __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Interna
 
 import requests
 import os
-
+import pandas as pd
 
 class TexpressRequestBuilder():
     """
@@ -443,3 +443,115 @@ def get_entity_hits_from_json(termite_json_response, score_cutoff=0):
             filtered_hits = process_payload(filtered_hits, response_payload, score_cutoff=score_cutoff, doc_id=doc_id)
 
     return filtered_hits
+
+
+######
+#
+# Methods for manipulating returned JSON into pandas dataframe
+#   |
+#   v
+######
+
+def json_resp_records(json_resp_texpress, remove_subsumed=True):
+    """
+    parses JSON RESP_TEXPRESS into records, includes filter to remove subsumed hits.
+
+    :param json_resp_texpress: RESP_TEXPRESS of TExpress JSON response
+    :param removeSubsumed: boolean
+    :return: TExpress hits in records format
+    """
+
+    hits = []
+    for docID, patterns in json_resp_texpress.items():
+        for pattern_id, pattern_matches in patterns.items():
+            if len(pattern_matches) is not 0:
+                for pattern_hits in pattern_matches:
+                    for match in pattern_hits['matches']:
+                        match['docID'] = docID
+                        match['patternID'] = pattern_id
+                        for x in pattern_hits:
+                            if x == "matches":
+                                continue
+                            elif x == "meta":
+                                for k, v in pattern_hits[x].items():
+                                    match[k] = v
+                            else:
+                                match[x] = pattern_hits[x]
+                        if remove_subsumed is True and match['subsumed'] is True:
+                            continue
+                        else:
+                            hits.append(match)
+
+    return (hits)
+
+
+def docjsonx_records(docjsonx_response, remove_subsumed=True):
+    """
+    Parses doc.JSONx TExpress into records, includes filter to remove subsumed hits.
+
+    :param docjsonx_response: TExpress doc.JSONx response
+    :param remove_subsumed: boolean
+    :return: TExpress hits in records format
+    """
+
+    hits = []
+    for doc in docjsonx_response:
+        for patternID, pattern_matches in doc['texpressTags'].items():
+            if len(pattern_matches) is not 0:
+                for pattern_hits in pattern_matches:
+                    for match in pattern_hits['matches']:
+                        match['patternID'] = patternID
+                        match.update(pattern_hits)
+                        match.update(doc)
+                        del (match['matches'])
+                        del (match['texpressTags'])
+                        if remove_subsumed is True and match['subsumed'] is True:
+                            continue
+                        else:
+                            hits.append(match)
+
+    return (hits)
+
+
+def texpress_records(texpress_response, remove_subsumed=True):
+    """
+    Parses TExpress JSON or doc.JSONx response into records, with filtering to remove subsumed hits.
+
+    :param texpress_response: TExpress JSON of doc.JSONx response
+    :param remove_subsumed: boolean
+    :return: records of TExpress hits
+    """
+
+    if 'RESP_TEXPRESS' in texpress_response:
+        records = json_resp_records(texpress_response['RESP_TEXPRESS'], remove_subsumed=remove_subsumed)
+    else:
+        records = docjsonx_records(texpress_response, remove_subsumed=remove_subsumed)
+
+    return (records)
+
+
+def texpress_dataframe(texpress_response, cols_to_add="", remove_subsumed=True):
+    """
+
+    :param texpress_response:
+    :param cols_to_add:
+    :param remove_subsumed:
+    :return:
+    """
+
+    texpressRecords = texpress_records(texpress_response, remove_subsumed=remove_subsumed)
+    df = pd.DataFrame(texpressRecords)
+
+    cols = ["docID", "patternID", "originalFragment", "matchEntities", "originalSentence",
+            "sentence", "subsumed"]
+
+    if cols_to_add:
+        cols_to_add = cols_to_add.replace(" ", "").split(",")
+        try:
+            df[cols_to_add]
+            cols = cols + cols_to_add
+            return (df[cols])
+        except KeyError as e:
+            print("Invalid column selection.", e)
+    else:
+        return (df[cols])

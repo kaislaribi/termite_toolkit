@@ -52,7 +52,7 @@ class UtilitiesRequestBuilder():
 
     def call_autocomplete(self, input, vocab, taxon=''):
         """
-
+        Complete a call to the auto complete API.
 
         :param input:
         :param vocab:

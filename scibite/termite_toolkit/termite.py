@@ -18,7 +18,7 @@ __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Interna
 
 import requests
 import os
-
+import pandas as pd
 
 class TermiteRequestBuilder():
     """
@@ -205,7 +205,7 @@ class TermiteRequestBuilder():
         except Exception as e:
             print(response.status_code, e)
 
-        if self.payload["output"] in ["json", "doc.json", "doc.jsonx"]:
+        if "json" in self.payload["output"]:
             return response.json()
         else:
             return response.text
@@ -374,3 +374,239 @@ def get_entity_hits_from_json(termite_json_response, filter_entity_types, reject
                                         score_cutoff=score_cutoff)
 
     return filtered_hits
+
+
+def docjsonx_payload_records(docjsonx_response_payload, reject_ambig=True, score_cutoff=0, remove_subsumed=True):
+    """
+    Parses TERMite doc.JSONx payload into records, includes rules to filter out ambiguous and low-relevance hits.
+
+    :param docjsonx_response_payload: doc.JSONx TERMite response.
+    :param reject_ambig: boolean
+    :param score_cutoff: a numerical value between 1-5
+    :param remove_subsumed: boolean
+    :return: TERMite response in records format
+    """
+    payload = []
+    for doc in docjsonx_response_payload:
+        for entity_hit in doc['termiteTags']:
+            # update document record with entity hit record
+            entity_hit.update(doc)
+            del entity_hit['termiteTags']
+
+            # filtering
+            if reject_ambig is True and entity_hit['nonambigsyns'] == 0:
+                continue
+            if "subsume" in entity_hit and remove_subsumed is True:
+                if True in entity_hit['subsume']:
+                    continue
+            if entity_hit['score'] >= score_cutoff:
+                payload.append(entity_hit)
+
+    return (payload)
+
+
+def json_payload_records(response_payload, reject_ambig=True, score_cutoff=0, remove_subsumed=True):
+    """
+    Parses TERMite json payload into records, includes rules to filter out ambiguous and low-relevance hits.
+
+    :param response_payload: REP_PAYLOAD of JSON TERMite response
+    :param reject_ambig: boolean
+    :param score_cutoff: a numerical value between 1-5
+    :param remove_subsumed: boolean
+    :return: TERMite response in records format
+    """
+    payload = []
+    for entity_type, entity_hits in response_payload.items():
+        for entity_hit in entity_hits:
+            # filtering
+            if reject_ambig is True and entity_hit['nonambigsyns'] == 0:
+                continue
+            if "subsume" in entity_hit and remove_subsumed is True:
+                if True in entity_hit['subsume']:
+                    continue
+            if entity_hit['score'] >= score_cutoff:
+                payload.append(entity_hit)
+
+    return (payload)
+
+
+def payload_records(termiteResponse, reject_ambig=True, score_cutoff=0, remove_subsumed=True):
+    """
+    Parses TERMite JSON or doc.JSONx output into records format.
+
+    :param termiteResponse: JSON or doc.JSONx TERMite response
+    :param reject_ambig: boolean
+    :param score_cutoff: a numerical value between 1-5
+    :param remove_subsumed: boolean
+    :return: TERMite response in records format
+    """
+    payload = []
+
+    if "RESP_MULTIDOC_PAYLOAD" in termiteResponse:
+        for docID, termite_hits in termiteResponse['RESP_MULTIDOC_PAYLOAD'].items():
+            payload = payload + json_payload_records(termite_hits, reject_ambig=reject_ambig,
+                                                     score_cutoff=score_cutoff, remove_subsumed=remove_subsumed)
+    elif "RESP_PAYLOAD" in termiteResponse:
+        payload = payload + json_payload_records(termiteResponse['RESP_PAYLOAD'], reject_ambig=reject_ambig,
+                                                 score_cutoff=score_cutoff, remove_subsumed=remove_subsumed)
+    else:
+        payload = docjsonx_payload_records(termiteResponse, reject_ambig=reject_ambig,
+                                           score_cutoff=score_cutoff, remove_subsumed=remove_subsumed)
+
+    return (payload)
+
+
+def payload_dataframe(termiteResponse, cols_to_add="", reject_ambig=True, score_cutoff=0,
+                      remove_subsumed=True):
+    """
+    Parses TERMite JSON or doc.JSONx into a dataframe of hits, filtering out ambiguous and low-relevance hits.
+    By default returns docID, entityType, hitID, name, score, realSynList, totnosyns, nonambigsyns, frag_vector_array.
+    Additional hit information not included in the default output can be included by use of a comma separated list.
+
+    :param termiteResponse: JSON or doc.JSONx response from TERMite
+    :param cols_to_add: comma separated list of additional fields to include
+    :param reject_ambig: boolean
+    :param score_cutoff: a numerical value between 1-5
+    :param remove_subsumed: boolean
+    :return: dataframe of TERMite hits
+    """
+
+    payload = payload_records(termiteResponse, reject_ambig=reject_ambig,
+                              score_cutoff=score_cutoff, remove_subsumed=remove_subsumed)
+    df = pd.DataFrame(payload)
+
+    cols = ["docID", "entityType", "hitID", "name", "score", "realSynList", "totnosyns", "nonambigsyns",
+            "frag_vector_array"]
+
+    if cols_to_add:
+        cols_to_add = cols_to_add.replace(" ", "").split(",")
+        try:
+            df[cols_to_add]
+            cols = cols + cols_to_add
+            return (df[cols])
+        except KeyError as e:
+            print("Invalid column selection.", e)
+    else:
+        return (df[cols])
+
+
+def get_entity_hits_from_docjsonx(termiteResponse, filter_entity_types):
+    """
+    Parses doc.JSONx TERMite response and returns a summary of the hits.
+
+    :param termiteResponse: doc.JSONx TERMite response
+    :param filter_entity_types: comma separated list
+    :return:
+    """
+    processed = docjsonx_payload_records(termiteResponse)
+
+    filtered_hits = {}
+    for entity_hit in processed:
+        # pprint(entity_hit)
+        hit_id = entity_hit['hitID']
+        entityType = entity_hit['entityType']
+        entity_id = entityType + '$' + hit_id
+        entity_name = entity_hit['name']
+        hit_count = entity_hit['hitCount']
+        entity_score = entity_hit['score']
+        doc_id = entity_hit['docID']
+
+        if entityType in filter_entity_types:
+            if entity_id in filtered_hits:
+                filtered_hits[entity_id]['hit_count'] += hit_count
+                if entity_score > filtered_hits[entity_id]['max_relevance_score']:
+                    filtered_hits[entity_id]['max_relevance_score'] = entity_score
+                if doc_id not in filtered_hits[entity_id]['doc_id']:
+                    filtered_hits[entity_id]['doc_id'].append(doc_id)
+                    filtered_hits[entity_id]['doc_count'] += 1
+            else:
+                filtered_hits[entity_id] = {"id": hit_id, "type": entityType, "name": entity_name,
+                                            "hit_count": hit_count,
+                                            "max_relevance_score": entity_score, "doc_id": [doc_id], "doc_count": 1}
+
+    return (filtered_hits)
+
+
+def all_entities(termiteResponse):
+    """
+    Parses TERMite response and returns a list of VOCab modules with hits.
+
+    :param termiteResponse: JSON or doc.JSONx TERMite response
+    :return: list
+    """
+    payload = payload_records(termiteResponse)
+
+    entities_used = []
+    for entity_hit in payload:
+        if entity_hit['entityType'] not in entities_used:
+            entities_used.append(entity_hit['entityType'])
+
+    return (entities_used)
+
+
+def entity_hits_dataframe(termiteResponse):
+    """
+    Parses JSON or doc.JSONx TERMite response into summary of hits dataframe
+
+    :param termiteResponse: JSON or doc.JSONx TERMite response
+    :return: pandas dataframe
+    """
+
+    # identify all entitiy hit types in the text
+    entities_used = all_entities(termiteResponse)
+    entities_string = (',').join(entities_used)
+
+    if "RESP_MULTIDOC_PAYLOAD" in termiteResponse or "RESP_PAYLOAD" in termiteResponse:
+        filtered_hits = get_entity_hits_from_json(termiteResponse, entities_string)
+    else:
+        filtered_hits = get_entity_hits_from_docjsonx(termiteResponse, entities_string)
+
+    df = pd.DataFrame(filtered_hits).T
+
+    return (df)
+
+
+def entity_freq(termiteResponse):
+    """
+    Parses TERMite JSON or doc.JSONx response and returns dataframe of entity type frequencies.
+
+    :param termiteResponse: JSON or doc.JSONx TERMite response
+    :return: pandas dataframe
+    """
+
+    df = entity_hits_dataframe(termiteResponse)
+
+    values = pd.value_counts(df['type'])
+    values = pd.DataFrame(values)
+    return (values)
+
+
+def top_hits(termiteResponse, selection=10, entitySubset=None, includeDocs=False):
+    """
+    Parses JSON or doc.JSONx TERMite response and returns a pandas dataframe of the most frequent hits. By default the
+    top 10 most frequent hits are returned. The entity types to include can be set by a comma separated list.
+    For multidoc results the documents in which hits occur can be included.
+
+    :param termiteResponse: JSON or doc.JSONx TERMite response
+    :param selection: number of most frequent hits to return
+    :param entitySubset: comma separated list
+    :param includeDocs: boolean
+    :return: pandas dataframe
+    """
+
+    # get entity hits and sort by hit_count
+    df = entity_hits_dataframe(termiteResponse)
+    df.sort_values(by=['hit_count'], ascending=False, inplace=True)
+    df2 = df.copy()
+
+    # select relevant columns and filtering
+    if includeDocs is True:
+        columns = [3, 5, 6, 2, 1]
+    else:
+        columns = [3, 5, 6, 2]
+    if entitySubset is not None:
+        entitySubset = entitySubset.replace(" ", "").split(",")
+        criteria = df2['type'].isin(entitySubset)
+        return (df2[criteria].iloc[0:selection, columns])
+    else:
+        return (df2.iloc[0:selection, columns])
