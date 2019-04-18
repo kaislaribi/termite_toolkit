@@ -11,7 +11,7 @@ Demo script making calls via the TERMite API and post-processing plus example ca
 
 """
 
-__author__ = 'Joe Mullen & Michael Hughes'
+__author__ = 'SciBite DataScience'
 __version__ = '2.0'
 __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'

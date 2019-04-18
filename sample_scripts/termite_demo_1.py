@@ -11,7 +11,7 @@ Demo script making calls with text to the TERMite API
 
 """
 
-__author__ = 'Joe Mullen & Michael Hughes'
+__author__ = 'SciBite DataScience'
 __version__ = '2.0'
 __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
@@ -28,6 +28,7 @@ entities = "DRUG"
 
 # initialise a request builder
 t = termite.TermiteRequestBuilder()
+
 # individually add items to your TERMite request
 t.set_url(termite_home)
 t.set_fuzzy(True)

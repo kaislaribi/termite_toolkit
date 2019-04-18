@@ -11,14 +11,13 @@ Demo script making calls with text to the TERMite API
 
 """
 
-__author__ = 'Joe Mullen & Michael Hughes'
+__author__ = 'SciBite DataScience'
 __version__ = '2.0'
 __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
 from termite_toolkit import termite
 import os
-from pprint import pprint
 
 parentDir = os.path.dirname(os.path.dirname(os.path.abspath("__file__")))
 small_input_file = "medline_sample.zip"
