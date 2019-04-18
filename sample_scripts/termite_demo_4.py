@@ -18,6 +18,7 @@ __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Interna
 
 from termite_toolkit import termite
 import os
+from pprint import pprint
 
 parentDir = os.path.dirname(os.path.dirname(os.path.abspath("__file__")))
 small_input_file = "medline_sample.zip"
@@ -32,7 +33,7 @@ t.set_output_format("doc.jsonx")
 
 # make request
 termite_multidoc_docjsonx = t.execute(display_request=True)
-print(termite_multidoc_docjsonx)
+pprint(termite_multidoc_docjsonx)
 
 # do some post-processing
 termite_dataframe = termite.payload_dataframe(termite_multidoc_docjsonx, "totnosyns")

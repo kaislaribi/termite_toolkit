@@ -20,6 +20,7 @@ import requests
 import os
 import pandas as pd
 
+
 class TermiteRequestBuilder():
     """
     Class for creating TERMite requests.
@@ -388,19 +389,20 @@ def docjsonx_payload_records(docjsonx_response_payload, reject_ambig=True, score
     """
     payload = []
     for doc in docjsonx_response_payload:
-        for entity_hit in doc['termiteTags']:
-            # update document record with entity hit record
-            entity_hit.update(doc)
-            del entity_hit['termiteTags']
+        if 'termiteTags' in doc.keys():
+            for entity_hit in doc['termiteTags']:
+                # update document record with entity hit record
+                entity_hit.update(doc)
+                del entity_hit['termiteTags']
 
-            # filtering
-            if reject_ambig is True and entity_hit['nonambigsyns'] == 0:
-                continue
-            if "subsume" in entity_hit and remove_subsumed is True:
-                if True in entity_hit['subsume']:
+                # filtering
+                if reject_ambig is True and entity_hit['nonambigsyns'] == 0:
                     continue
-            if entity_hit['score'] >= score_cutoff:
-                payload.append(entity_hit)
+                if "subsume" in entity_hit and remove_subsumed is True:
+                    if True in entity_hit['subsume']:
+                        continue
+                if entity_hit['score'] >= score_cutoff:
+                    payload.append(entity_hit)
 
     return (payload)
 
@@ -481,7 +483,6 @@ def payload_dataframe(termiteResponse, cols_to_add="", reject_ambig=True, score_
     if cols_to_add:
         cols_to_add = cols_to_add.replace(" ", "").split(",")
         try:
-            df[cols_to_add]
             cols = cols + cols_to_add
             return (df[cols])
         except KeyError as e:
