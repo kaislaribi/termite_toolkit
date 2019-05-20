@@ -62,8 +62,7 @@ class UtilitiesRequestBuilder():
 
         if len(input) < 3:
             return 'Please provide a string longer than 3 chars..'
-        response = requests.post(("%s/toolkit/autocomplete.api" % self.url),
-                                 data={"term": input, "e": vocab, "limit": taxon})
+        response = requests.post(("%s/toolkit/autocomplete.api" % self.url), data={"term": input, "e": vocab, "limit": taxon})
 
         if response.ok:
             ac_json = response.json()
