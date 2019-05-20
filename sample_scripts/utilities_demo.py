@@ -20,7 +20,7 @@ from termite_toolkit import utilities
 from pprint import pprint
 
 # specify termite ac API endpoint
-acapi_home = 'http://localhost:9090/termite/toolkit/autocomplete.api'
+acapi_home = 'http://localhost:9090/termite'
 
 # specify vocab to use
 vocab = "DRUG"
