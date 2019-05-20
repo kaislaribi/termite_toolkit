@@ -17,7 +17,6 @@ __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
 from termite_toolkit import termite
-from pprint import pprint
 
 small_input_file = "medline_sample.zip"
 
