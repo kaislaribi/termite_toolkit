@@ -33,18 +33,18 @@ t.set_output_format("doc.jsonx")
 termite_multidoc_docjsonx = t.execute(display_request=True)
 
 # load the json returned by TERMite into a dataframe
-# termite_dataframe = termite.get_termite_dataframe(termite_multidoc_docjsonx)
-# print(termite_dataframe)
+termite_dataframe = termite.get_termite_dataframe(termite_multidoc_docjsonx)
+print(termite_dataframe)
 
 # load the json returned by TERMite into a dataframe, whilst specifying additional columns to be included in the output
-# termite_dataframe_extended = termite.get_termite_dataframe(termite_multidoc_docjsonx, cols_to_add='kvp,dictSynList')
-# print(termite_dataframe_extended)
+termite_dataframe_extended = termite.get_termite_dataframe(termite_multidoc_docjsonx, cols_to_add='kvp,dictSynList')
+print(termite_dataframe_extended['kvp'])
 
 # get all the entities from the termite json
-# print(termite.all_entities(termite_multidoc_docjsonx))
+print(termite.all_entities(termite_multidoc_docjsonx))
 
 # get all the entities from the termite json in a dataframe#
-# print(termite.all_entities_df(termite_multidoc_docjsonx))
+print(termite.all_entities_df(termite_multidoc_docjsonx))
 
 termite_dataframe = termite.get_termite_dataframe(termite_multidoc_docjsonx)
 print(list(termite_dataframe.columns))
