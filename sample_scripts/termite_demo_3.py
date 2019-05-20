@@ -7,7 +7,7 @@
  |____/ \___|_|____/|_|\__\___|   |_| |_____|_| \_\_|  |_|_|\__\___|   |_|\___/ \___/|_|_|\_\_|\__|
 
 
-Demo script making calls via the TERMite API and post-processing plus example call to get info around a specific entity
+Demo script making calls via the TERMite API and post-processing, using either files or text
 
 """
 
@@ -22,15 +22,17 @@ from termite_toolkit import termite
 # specify termite API endpoint
 termite_home = "http://localhost:9090/termite"
 input_file = "medline_sample.zip"
+
+# running a file through termite
 options = {"format": "medline.xml", "output": "json", "entities": "HUCELL"}
 termite_json_response = termite.annotate_files(termite_home, input_file, options)
 entity_hits = termite.get_entity_hits_from_json(termite_json_response, "HUCELL", score_cutoff=2)
 pprint(entity_hits)
 
+# running a list of strings through termite one at a time and post-processing response
 text_list = [
     "sildenafil is a drug. sildenafil is a drug. sildenafil is a drug. sildenafil is a drug. sildenafil is a drug",
     "macrophage colony stimulating factor"]
-
 options = {"format": "txt", "output": "json", "entities": "DRUG,GENE,HUCELL"}
 
 for i, text in enumerate(text_list):
@@ -38,6 +40,3 @@ for i, text in enumerate(text_list):
     entity_hits = termite.get_entity_hits_from_json(termite_json_response, "DRUG,GENE,HUCELL")
     print("row_" + str(i), ":", entity_hits)
 
-print("\n--EXAMPLE call to show retrieval of entity metadata--\n")
-
-pprint(termite.get_entity_details(termite_home, 'NFKB1', 'GENE'))

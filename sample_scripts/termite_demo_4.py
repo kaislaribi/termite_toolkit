@@ -31,13 +31,19 @@ t.set_output_format("doc.jsonx")
 # make request
 termite_multidoc_docjsonx = t.execute(display_request=True)
 
-# do some post-processing
+# load the json returned by TERMite into a dataframe
 termite_dataframe = termite.payload_dataframe(termite_multidoc_docjsonx, "totnosyns")
 print(termite.all_entities(termite_multidoc_docjsonx))
 
+# load the json returned by TERMite into a dataframe
+termite_dataframe_extended = termite.payload_dataframe(termite_multidoc_docjsonx, "totnosyns")
+print(termite.all_entities(termite_dataframe_extended))
+
+# get a list of all the TERMite entity hits, via the dataframe
 entity_hits_df = termite.get_termite_dataframe(termite_multidoc_docjsonx)
 print(termite.entity_freq(termite_multidoc_docjsonx))
 
+# get a list of all the most frequently hit entities, via the dataframe
 top_hits_df = termite.top_hits(termite_multidoc_docjsonx, entitySubset='GENE,MPATH, SBIO', selection=5,
                                includeDocs=True)
 print(top_hits_df)

@@ -461,8 +461,8 @@ def payload_records(termiteResponse, reject_ambig=True, score_cutoff=0, remove_s
     return (payload)
 
 
-def payload_dataframe(termiteResponse, cols_to_add="", reject_ambig=True, score_cutoff=0,
-                      remove_subsumed=True):
+def get_termite_dataframe(termiteResponse, cols_to_add="", reject_ambig=True, score_cutoff=0,
+                          remove_subsumed=True):
     """
     Parses TERMite JSON or doc.JSONx into a dataframe of hits, filtering out ambiguous and low-relevance hits.
     By default returns docID, entityType, hitID, name, score, realSynList, totnosyns, nonambigsyns, frag_vector_array.
@@ -548,7 +548,7 @@ def all_entities(termiteResponse):
     return (entities_used)
 
 
-def get_termite_dataframe(termiteResponse):
+def all_entities_df(termiteResponse):
     """
     Parses JSON or doc.JSONx TERMite response into summary of hits dataframe
 
@@ -585,7 +585,7 @@ def entity_freq(termiteResponse):
     return (values)
 
 
-def top_hits(termiteResponse, selection=10, entitySubset=None, includeDocs=False):
+def top_hits_df(termiteResponse, selection=10, entitySubset=None, includeDocs=False):
     """
     Parses JSON or doc.JSONx TERMite response and returns a pandas dataframe of the most frequent hits. By default the
     top 10 most frequent hits are returned. The entity types to include can be set by a comma separated list.
