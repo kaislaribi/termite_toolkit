@@ -436,7 +436,7 @@ def get_termite_dataframe(termiteResponse, cols_to_add="", reject_ambig=True, sc
     df = pd.DataFrame(payload)
 
     cols = ["docID", "entityType", "hitID", "name", "score", "realSynList", "totnosyns", "nonambigsyns",
-            "frag_vector_array"]
+            "frag_vector_array", "hitCount"]
 
     if cols_to_add:
         cols_to_add = cols_to_add.replace(" ", "").split(",")
@@ -535,7 +535,7 @@ def entity_freq(termiteResponse):
 
     df = get_termite_dataframe(termiteResponse)
 
-    values = pd.value_counts(df['type'])
+    values = pd.value_counts(df['entityType'])
     values = pd.DataFrame(values)
     return (values)
 
@@ -555,7 +555,7 @@ def top_hits_df(termiteResponse, selection=10, entitySubset=None, includeDocs=Fa
 
     # get entity hits and sort by hit_count
     df = get_termite_dataframe(termiteResponse)
-    df.sort_values(by=['hit_count'], ascending=False, inplace=True)
+    df.sort_values(by=['hitCount'], ascending=False, inplace=True)
     df2 = df.copy()
 
     # select relevant columns and filtering
@@ -565,7 +565,7 @@ def top_hits_df(termiteResponse, selection=10, entitySubset=None, includeDocs=Fa
         columns = [3, 5, 6, 2]
     if entitySubset is not None:
         entitySubset = entitySubset.replace(" ", "").split(",")
-        criteria = df2['type'].isin(entitySubset)
+        criteria = df2['entityType'].isin(entitySubset)
         return (df2[criteria].iloc[0:selection, columns])
     else:
         return (df2.iloc[0:selection, columns])

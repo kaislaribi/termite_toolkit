@@ -7,7 +7,7 @@
  |____/ \___|_|____/|_|\__\___|   |_| |_____|_| \_\_|  |_|_|\__\___|   |_|\___/ \___/|_|_|\_\_|\__|
 
 
-Demo script making calls with text to the TERMite API
+Demo script making calls to the TERMite API and returnign annotations in a dataframe
 
 """
 
@@ -17,6 +17,7 @@ __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
 from termite_toolkit import termite
+from pprint import pprint
 
 small_input_file = "medline_sample.zip"
 
@@ -32,18 +33,26 @@ t.set_output_format("doc.jsonx")
 termite_multidoc_docjsonx = t.execute(display_request=True)
 
 # load the json returned by TERMite into a dataframe
-termite_dataframe = termite.payload_dataframe(termite_multidoc_docjsonx, "totnosyns")
-print(termite.all_entities(termite_multidoc_docjsonx))
+# termite_dataframe = termite.get_termite_dataframe(termite_multidoc_docjsonx)
+# print(termite_dataframe)
 
-# load the json returned by TERMite into a dataframe
-termite_dataframe_extended = termite.payload_dataframe(termite_multidoc_docjsonx, "totnosyns")
-print(termite.all_entities(termite_dataframe_extended))
+# load the json returned by TERMite into a dataframe, whilst specifying additional columns to be included in the output
+# termite_dataframe_extended = termite.get_termite_dataframe(termite_multidoc_docjsonx, cols_to_add='kvp,dictSynList')
+# print(termite_dataframe_extended)
 
-# get a list of all the TERMite entity hits, via the dataframe
-entity_hits_df = termite.get_termite_dataframe(termite_multidoc_docjsonx)
+# get all the entities from the termite json
+# print(termite.all_entities(termite_multidoc_docjsonx))
+
+# get all the entities from the termite json in a dataframe#
+# print(termite.all_entities_df(termite_multidoc_docjsonx))
+
+termite_dataframe = termite.get_termite_dataframe(termite_multidoc_docjsonx)
+print(list(termite_dataframe.columns))
+
+# get a list of all the TERMite entity hits
 print(termite.entity_freq(termite_multidoc_docjsonx))
 
-# get a list of all the most frequently hit entities, via the dataframe
-top_hits_df = termite.top_hits(termite_multidoc_docjsonx, entitySubset='GENE,MPATH, SBIO', selection=5,
+# get a list of all the most frequently hit entities
+top_hits = termite.top_hits_df(termite_multidoc_docjsonx, entitySubset='GENE,MPATH, SBIO', selection=5,
                                includeDocs=True)
-print(top_hits_df)
+print(top_hits)
