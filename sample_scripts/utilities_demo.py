@@ -32,3 +32,6 @@ ac_response = ac_example.call_autocomplete('sild', vocab)
 
 # print results
 pprint(ac_response)
+
+# get_entity_details
+pprint(ac_example.get_entity_details('NFKB1', 'GENE'))

@@ -25,7 +25,7 @@ class UtilitiesRequestBuilder():
     """
 
     def __init__(self):
-        self.url = 'http://localhost:9090/termite/toolkit/autocomplete.api'
+        self.url = 'http://localhost:9090/termite'
         self.basic_auth = ()
         self.verify_request = True
 
@@ -62,8 +62,8 @@ class UtilitiesRequestBuilder():
 
         if len(input) < 3:
             return 'Please provide a string longer than 3 chars..'
-
-        response = requests.post(self.url, data={"term": input, "e": vocab, "limit": taxon})
+        response = requests.post(("%s/toolkit/autocomplete.api" % self.url),
+                                 data={"term": input, "e": vocab, "limit": taxon})
 
         if response.ok:
             ac_json = response.json()
