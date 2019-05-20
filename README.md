@@ -8,6 +8,7 @@ The library also enables post-processing of the JSON returned from such requests
 ```
 $ pip3 install termite_toolkit==[version]
 ```
+Versions listed on [PyPi](https://pypi.org/project/termite-toolkit/)!
 
 ## Example call to TERMite
 
