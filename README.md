@@ -6,7 +6,7 @@ The library also enables post-processing of the JSON returned from such requests
 ## Install
 
 ```
-$ pip3 install termite_toolkit
+$ pip3 install termite_toolkit==[version]
 ```
 
 ## Example call to TERMite
