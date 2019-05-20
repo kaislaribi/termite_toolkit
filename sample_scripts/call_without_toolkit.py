@@ -16,7 +16,7 @@ import requests
 import os
 
 __author__ = 'Joe Mullen'
-__version__ = '2.0'
+__version__ = '0.2'
 
 MEDLINEZIP = "medline_sample.zip"
 TERMITE_URL = 'http://localhost:9090/termite'
