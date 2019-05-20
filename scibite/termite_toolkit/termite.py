@@ -264,51 +264,6 @@ def annotate_text(url, text, options_dict):
     return result
 
 
-def get_entity(termite_home, entity_id, entity_type):
-    """
-    Entity lookup function, given and entity type (e.g. GENE, INDICATION) and entity ID (e.g. CSF1, D010024)
-    creates and runs GET call of the format: http://localhost:9090/termite/toolkit/tool.api?t=describe&id=INDICATION:D001249
-    returns TERMite json
-
-    :param termite_home: url to TERMite instance
-    :param entity_id: id of entity of interest
-    :param entity_type: type of entity of interest
-    :return:
-    """
-    url = ("%s/toolkit/tool.api?t=describe&id=%s:%s" % (termite_home, entity_type, entity_id))
-    response = requests.get(url)
-
-    if response.ok:
-        entity_json = response.json()
-        return entity_json
-
-    else:
-        return response.status_code
-
-
-def get_entity_details(termite_home, entity_id, entity_type):
-    """
-    Returns a subset of metadata from the get_entity result: ID, name, mappings to external IDs
-
-    :param termite_home: url to TERMite instance
-    :param entity_id: id of entity of interest
-    :param entity_type: type of entity of interest
-    :return:
-    """
-    details = {"id": entity_id, "type": entity_type, "name": "", "mappings": []}
-    entity_meta = get_entity(termite_home, entity_id, entity_type)
-    if len(entity_meta["TOOL_RESULT"]) > 0:
-        e = entity_meta["TOOL_RESULT"][0]
-        details["name"] = e["name"]
-        if "mappings" in e:
-            mappings = e["mappings"]
-            for m in mappings:
-                items = m.split('|')
-                details["mappings"].append(items)
-
-    return details
-
-
 def process_payload(filtered_hits, response_payload, filter_entity_types, doc_id='', reject_ambig=True, score_cutoff=0,
                     remove_subsumed=True):
     """
