@@ -39,5 +39,5 @@ t.set_reverse(False)
 result = t.execute(display_request=True)
 
 # create dataframe from returned JSON
-pandas_df = texpress.texpress_dataframe(result)
+pandas_df = texpress.get_texpress_dataframe(result)
 print(pandas_df)

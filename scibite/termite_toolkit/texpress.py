@@ -42,6 +42,7 @@ class TexpressRequestBuilder():
 
         :param username: username to be used for basic authentication
         :param password: password to be used for basic authentication
+        :param verification: if set to False requests will ifnore verifying the SSL certificate, can also pass the path to a certfile
         :return:
         """
         self.basic_auth = (username, password)
@@ -194,7 +195,9 @@ class TexpressRequestBuilder():
             else:
                 response = requests.post(self.url, data=self.payload)
         except Exception as e:
-            print(response.status_code, e)
+            return print(
+                "Failed with the following error {}\n\nPlease check that TERMite can be accessed via the following URL {}\nAnd that the necessary credentials have been provided (done so using the set_basic_auth() function)".format(
+                    e, self.url))
 
         if self.payload["output"] in ["json", "doc.json", "doc.jsonx"]:
             return response.json()
@@ -532,7 +535,7 @@ def texpress_records(texpress_response, remove_subsumed=True):
     return (records)
 
 
-def texpress_dataframe(texpress_response, cols_to_add="", remove_subsumed=True):
+def get_texpress_dataframe(texpress_response, cols_to_add="", remove_subsumed=True):
     """
 
     :param texpress_response:

@@ -38,10 +38,11 @@ class TermiteRequestBuilder():
     def set_basic_auth(self, username='', password='', verification=True):
         """
         Pass basic authentication credentials.
-        ** ONLY change verification if you are calling a known source **
+        **ONLY change verification if you are calling a known source**
 
         :param username: username to be used for basic authentication
         :param password: password to be used for basic authentication
+        :param verification: if set to False requests will ifnore verifying the SSL certificate, can also pass the path to a certfile
         :return:
         """
         self.basic_auth = (username, password)
@@ -204,7 +205,9 @@ class TermiteRequestBuilder():
             else:
                 response = requests.post(self.url, data=self.payload)
         except Exception as e:
-            print(response.status_code, e)
+            return print(
+                "Failed with the following error {}\n\nPlease check that TERMite can be accessed via the following URL {}\nAnd that the necessary credentials have been provided (done so using the set_basic_auth() function)".format(
+                    e, self.url))
 
         if "json" in self.payload["output"]:
             return response.json()
@@ -545,7 +548,7 @@ def all_entities(termiteResponse):
     return (entities_used)
 
 
-def entity_hits_dataframe(termiteResponse):
+def get_termite_dataframe(termiteResponse):
     """
     Parses JSON or doc.JSONx TERMite response into summary of hits dataframe
 
@@ -575,7 +578,7 @@ def entity_freq(termiteResponse):
     :return: pandas dataframe
     """
 
-    df = entity_hits_dataframe(termiteResponse)
+    df = get_termite_dataframe(termiteResponse)
 
     values = pd.value_counts(df['type'])
     values = pd.DataFrame(values)
@@ -596,7 +599,7 @@ def top_hits(termiteResponse, selection=10, entitySubset=None, includeDocs=False
     """
 
     # get entity hits and sort by hit_count
-    df = entity_hits_dataframe(termiteResponse)
+    df = get_termite_dataframe(termiteResponse)
     df.sort_values(by=['hit_count'], ascending=False, inplace=True)
     df2 = df.copy()
 

@@ -35,7 +35,7 @@ termite_multidoc_docjsonx = t.execute(display_request=True)
 termite_dataframe = termite.payload_dataframe(termite_multidoc_docjsonx, "totnosyns")
 print(termite.all_entities(termite_multidoc_docjsonx))
 
-entity_hits_df = termite.entity_hits_dataframe(termite_multidoc_docjsonx)
+entity_hits_df = termite.get_termite_dataframe(termite_multidoc_docjsonx)
 print(termite.entity_freq(termite_multidoc_docjsonx))
 
 top_hits_df = termite.top_hits(termite_multidoc_docjsonx, entitySubset='GENE,MPATH, SBIO', selection=5,
