@@ -1,4 +1,4 @@
-import prep
+from termite_toolkit import prep
 from termite_toolkit import termite
 
 # specify termite API endpoint
