@@ -1,5 +1,7 @@
 import setuptools
 
+VERSION = "0.2.2"
+
 # read the contents of your README file
 from os import path
 
@@ -8,7 +10,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setuptools.setup(name='termite_toolkit',
-                 version='0.2.1',
+                 version=VERSION,
                  description='Python library for calling TERMite and TExpress and processing results',
                  url='https://github.com/SciBiteLabs/termite_toolkit',
                  install_requires=[

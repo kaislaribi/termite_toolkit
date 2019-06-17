@@ -11,14 +11,17 @@ TERMiteRequestBuilder- make requests to the TERMite API and process results.
 
 """
 
+from ..setup import VERSION
+
 __author__ = 'SciBite DataScience'
-__version__ = '0.2'
+__version__ = VERSION
 __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
 import requests
 import os
 import pandas as pd
+
 
 
 class TermiteRequestBuilder():
@@ -378,7 +381,6 @@ def json_payload_records(response_payload, reject_ambig=True, score_cutoff=0, re
     payload = []
     for entity_type, entity_hits in response_payload.items():
         for entity_hit in entity_hits:
-            # filtering
             if reject_ambig is True and entity_hit['nonambigsyns'] == 0:
                 continue
             if "subsume" in entity_hit and remove_subsumed is True:
@@ -409,6 +411,7 @@ def payload_records(termiteResponse, reject_ambig=True, score_cutoff=0, remove_s
     elif "RESP_PAYLOAD" in termiteResponse:
         payload = payload + json_payload_records(termiteResponse['RESP_PAYLOAD'], reject_ambig=reject_ambig,
                                                  score_cutoff=score_cutoff, remove_subsumed=remove_subsumed)
+
     else:
         payload = docjsonx_payload_records(termiteResponse, reject_ambig=reject_ambig,
                                            score_cutoff=score_cutoff, remove_subsumed=remove_subsumed)
@@ -433,6 +436,7 @@ def get_termite_dataframe(termiteResponse, cols_to_add="", reject_ambig=True, sc
 
     payload = payload_records(termiteResponse, reject_ambig=reject_ambig,
                               score_cutoff=score_cutoff, remove_subsumed=remove_subsumed)
+
     df = pd.DataFrame(payload)
 
     cols = ["docID", "entityType", "hitID", "name", "score", "realSynList", "totnosyns", "nonambigsyns",
@@ -442,10 +446,14 @@ def get_termite_dataframe(termiteResponse, cols_to_add="", reject_ambig=True, sc
         cols_to_add = cols_to_add.replace(" ", "").split(",")
         try:
             cols = cols + cols_to_add
+            if df.empty:
+                return pd.DataFrame(columns=cols)
             return (df[cols])
         except KeyError as e:
             print("Invalid column selection.", e)
     else:
+        if df.empty:
+            return pd.DataFrame(columns=cols)
         return (df[cols])
 
 
@@ -461,7 +469,6 @@ def get_entity_hits_from_docjsonx(termiteResponse, filter_entity_types):
 
     filtered_hits = {}
     for entity_hit in processed:
-        # pprint(entity_hit)
         hit_id = entity_hit['hitID']
         entityType = entity_hit['entityType']
         entity_id = entityType + '$' + hit_id
@@ -569,3 +576,6 @@ def top_hits_df(termiteResponse, selection=10, entitySubset=None, includeDocs=Fa
         return (df2[criteria].iloc[0:selection, columns])
     else:
         return (df2.iloc[0:selection, columns])
+
+
+

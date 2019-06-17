@@ -11,8 +11,10 @@ TExpressRequestBuilder- make requests to the TExpress API and process results.
 
 """
 
+from ..setup import VERSION
+
 __author__ = 'SciBite DataScience'
-__version__ = '0.2'
+__version__ = VERSION
 __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
