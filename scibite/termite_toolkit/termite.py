@@ -240,7 +240,7 @@ def annotate_text(url, text, options_dict):
     Wrapper function to execute a TERMite request for annotating strings of text
 
     :param url: url of TERMite instance
-    :param input_file_path: path to file to be annotated
+    :param text: text to be annotated
     :param options_dict: dictionary of options to be used during annotation
     :return: result of request
     """
@@ -259,13 +259,13 @@ def process_payload(filtered_hits, response_payload, filter_entity_types, doc_id
     Parses the termite json output to filter out only entity types of interest and their major metadata
     includes rules for rejecting ambiguous or low-relevance hits
 
-    :param filtered_hits:
-    :param response_payload:
-    :param filter_entity_types:
-    :param doc_id:
-    :param reject_ambig:
-    :param score_cutoff:
-    :param remove_subsumed:
+    :param filtered_hits: input
+    :param response_payload: json response
+    :param filter_entity_types: entity types to filter
+    :param doc_id: doc id to filter
+    :param reject_ambig: boolean reject ambiguous hits
+    :param score_cutoff: int score cit-off
+    :param remove_subsumed: boolean remove subsumed
     :return: dictionary of filtered hits
     """
     for entity_type, entity_hits in response_payload.items():
