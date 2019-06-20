@@ -1,11 +1,12 @@
 """
-
+::
   ____       _ ____  _ _         _____ _____ ____  __  __ _ _         _____           _ _    _ _
  / ___|  ___(_) __ )(_) |_ ___  |_   _| ____|  _ \|  \/  (_) |_ ___  |_   _|__   ___ | | | _(_) |_
  \___ \ / __| |  _ \| | __/ _ \   | | |  _| | |_) | |\/| | | __/ _ \   | |/ _ \ / _ \| | |/ / | __|
   ___) | (__| | |_) | | ||  __/   | | | |___|  _ <| |  | | | ||  __/   | | (_) | (_) | |   <| | |_
  |____/ \___|_|____/|_|\__\___|   |_| |_____|_| \_\_|  |_|_|\__\___|   |_|\___/ \___/|_|_|\_\_|\__|
 
+::
 
 Utility functions- including autocomplete
 
@@ -34,7 +35,6 @@ class UtilitiesRequestBuilder():
         Set the URL of the TERMite instance e.g. for local instance http://localhost:9090/termite/toolkit/autocomplete.api
 
         :param url: the URL of the TERMite instance to be hit
-        :return:
         """
         self.url = url
 
@@ -45,24 +45,23 @@ class UtilitiesRequestBuilder():
 
         :param username: username to be used for basic authentication
         :param password: password to be used for basic authentication
-        :return:
         """
         self.basic_auth = (username, password)
         self.verify_request = verification
 
     def call_autocomplete(self, input, vocab, taxon=''):
         """
-        Complete a call to the auto complete API.
+        Complete a call to the auto complete API
 
-        :param input:
-        :param vocab:
-        :param taxon:
-        :return:
+        :param input: input string
+        :param vocab: vocabs to limit ac too
+        :param taxon: taxon to limit ac too
         """
 
         if len(input) < 3:
             return 'Please provide a string longer than 3 chars..'
-        response = requests.post(("%s/toolkit/autocomplete.api" % self.url), data={"term": input, "e": vocab, "limit": taxon})
+        response = requests.post(("%s/toolkit/autocomplete.api" % self.url),
+                                 data={"term": input, "e": vocab, "limit": taxon})
 
         if response.ok:
             ac_json = response.json()
@@ -75,12 +74,10 @@ class UtilitiesRequestBuilder():
         """
         Entity lookup function, given and entity type (e.g. GENE, INDICATION) and entity ID (e.g. CSF1, D010024)
         creates and runs GET call of the format: http://localhost:9090/termite/toolkit/tool.api?t=describe&id=INDICATION:D001249
-        returns TERMite json
 
-        :param termite_home: url to TERMite instance
         :param entity_id: id of entity of interest
         :param entity_type: type of entity of interest
-        :return:
+        :return: request response
         """
         url = ("%s/toolkit/tool.api?t=describe&id=%s:%s" % (self.url, entity_type, entity_id))
         response = requests.get(url)
@@ -96,10 +93,9 @@ class UtilitiesRequestBuilder():
         """
         Returns a subset of metadata from the get_entity result: ID, name, mappings to external IDs
 
-        :param termite_home: url to TERMite instance
         :param entity_id: id of entity of interest
         :param entity_type: type of entity of interest
-        :return:
+        :return: entity details
         """
         details = {"id": entity_id, "type": entity_type, "name": "", "mappings": []}
         entity_meta = self.get_entity(entity_id, entity_type)

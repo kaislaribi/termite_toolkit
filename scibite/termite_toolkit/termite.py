@@ -42,8 +42,8 @@ class TermiteRequestBuilder():
 
         :param username: username to be used for basic authentication
         :param password: password to be used for basic authentication
-        :param verification: if set to False requests will ifnore verifying the SSL certificate, can also pass the path to a certfile
-        :return:
+        :param verification: if set to False requests will ignore verifying the SSL certificate, can also pass the path
+        to a certificate file
         """
         self.basic_auth = (username, password)
         self.verify_request = verification
@@ -53,17 +53,15 @@ class TermiteRequestBuilder():
         Set the URL of the TERMite instance e.g. for local instance http://localhost:9090/termite
 
         :param url: the URL of the TERMite instance to be hit
-        :return:
         """
         self.url = url
 
     def set_binary_content(self, input_file_path):
         """
         For annotating file content, send file path string and process file as a binary
-        multiple files of the same type can be scanned at once if placed in a zip archive.
+        multiple files of the same type can be scanned at once if placed in a zip archive
 
         :param input_file_path: file path to the file to be sent to TERMite
-        :return:
         """
         file_obj = open(input_file_path, 'rb')
         file_name = os.path.basename(input_file_path)
@@ -74,7 +72,6 @@ class TermiteRequestBuilder():
         Use this for tagging raw text e.g. if looping through some file content
 
         :param string: text to be sent to TERMite
-        :return:
         """
         self.payload["text"] = string
 
@@ -83,7 +80,6 @@ class TermiteRequestBuilder():
         For bulk setting multiple TERMite API options in a single call, send a dictionary object here
 
         :param options_dict: a dictionary of options to be passed to TERMite
-        :return:
         """
 
         if 'output' in options_dict:
@@ -107,7 +103,6 @@ class TermiteRequestBuilder():
         Use fuzzy matching?
 
         :param bool: set to True if fuzzy matching is to be enabled
-        :return:
         """
         input = bool_to_string(bool)
         if "opts" in self.payload:
@@ -120,7 +115,6 @@ class TermiteRequestBuilder():
         """
         Take longest hit where an entity is a hit against more than one dictionary
         :param bool: set subsume if True
-        :return:
         """
         input = bool_to_string(bool)
         self.payload["subsume"] = input
@@ -130,7 +124,6 @@ class TermiteRequestBuilder():
         Limit the entities to be annotated
 
         :param string: a comma separated string of entity types, e.g. 'DRUG,GENE'
-        :return:
         """
         self.payload["entities"] = string
 
@@ -139,7 +132,6 @@ class TermiteRequestBuilder():
         Set input format e.g. txt, medline.xml, node.xml, pdf, xlsx
 
         :param string: string input format
-        :return:
         """
         self.payload["format"] = string
 
@@ -148,16 +140,14 @@ class TermiteRequestBuilder():
         Set output format e.g. tsv, json, doc.json
 
         :param string: provide the output format to be used
-        :return:
         """
         self.payload["output"] = string
 
     def set_reject_ambiguous(self, bool):
         """
-        Automatically reject any hits flagged as ambiguous.
+        Automatically reject any hits flagged as ambiguous
 
         :param bool: set True to reject any ambiguous hits
-        :return:
         """
         input = bool_to_string(bool)
         if "opts" in self.payload:
@@ -171,7 +161,6 @@ class TermiteRequestBuilder():
         also applies where there are multiple document records in a single xml e.g. from a medline XML export
 
         :param integer: number of documents to limit annotation too
-        :return:
         """
         self.payload["maxDocs"] = integer
 
@@ -180,7 +169,6 @@ class TermiteRequestBuilder():
         Reject all documents where there were no hits
 
         :param bool: if True do not return any docs with no hits
-        :return:
         """
         input = bool_to_string(bool)
         self.payload["noEmpty"] = input
@@ -190,7 +178,7 @@ class TermiteRequestBuilder():
         Once all settings are done, POST the parameters to the TERMite RESTful API
 
         :param display_request: if True request will be printed out before being submitted
-        :return:
+        :return: request response
         """
         if display_request:
             print("REQUEST: ", self.url, self.payload)
@@ -220,7 +208,7 @@ def bool_to_string(bool):
     Convert a boolean to a string
 
     :param bool: provide boolean to be converted
-    :return:
+    :return: string
     """
     string = str(bool)
     string = string.lower()
@@ -235,7 +223,7 @@ def annotate_files(url, input_file_path, options_dict):
     :param url: url of TERMite instance
     :param input_file_path: path to file to be annotated
     :param options_dict: dictionary of options to be used during annotation
-    :return:
+    :return: result of request
     """
     t = TermiteRequestBuilder()
     t.set_url(url)
@@ -253,7 +241,7 @@ def annotate_text(url, text, options_dict):
     :param url: url of TERMite instance
     :param input_file_path: path to file to be annotated
     :param options_dict: dictionary of options to be used during annotation
-    :return:
+    :return: result of request
     """
     t = TermiteRequestBuilder()
     t.set_url(url)
@@ -268,7 +256,7 @@ def process_payload(filtered_hits, response_payload, filter_entity_types, doc_id
                     remove_subsumed=True):
     """
     Parses the termite json output to filter out only entity types of interest and their major metadata
-    includes rules for rejecting ambiguous or low-relevance hits.
+    includes rules for rejecting ambiguous or low-relevance hits
 
     :param filtered_hits:
     :param response_payload:
@@ -277,7 +265,7 @@ def process_payload(filtered_hits, response_payload, filter_entity_types, doc_id
     :param reject_ambig:
     :param score_cutoff:
     :param remove_subsumed:
-    :return:
+    :return: dictionary of filtered hits
     """
     for entity_type, entity_hits in response_payload.items():
         if entity_type in filter_entity_types:
@@ -311,13 +299,13 @@ def process_payload(filtered_hits, response_payload, filter_entity_types, doc_id
 
 def get_entity_hits_from_json(termite_json_response, filter_entity_types, reject_ambig=True, score_cutoff=0):
     """
-
+    Extract entity hits from TERMite JSON
 
     :param termite_json_response: JSON returned from TERMite
     :param filter_entity_types: string of entity types separated by commas
     :param reject_ambig: boolean
     :param score_cutoff: a numeric value between 1-5
-    :return:
+    :return: dictionary of filtered hits
     """
     filtered_hits = {}
     filter_entity_types = filter_entity_types.replace(' ', '').split(',')
@@ -337,7 +325,7 @@ def get_entity_hits_from_json(termite_json_response, filter_entity_types, reject
 
 def docjsonx_payload_records(docjsonx_response_payload, reject_ambig=True, score_cutoff=0, remove_subsumed=True):
     """
-    Parses TERMite doc.JSONx payload into records, includes rules to filter out ambiguous and low-relevance hits.
+    Parses TERMite doc.JSONx payload into records, includes rules to filter out ambiguous and low-relevance hits
 
     :param docjsonx_response_payload: doc.JSONx TERMite response.
     :param reject_ambig: boolean
@@ -367,7 +355,7 @@ def docjsonx_payload_records(docjsonx_response_payload, reject_ambig=True, score
 
 def json_payload_records(response_payload, reject_ambig=True, score_cutoff=0, remove_subsumed=True):
     """
-    Parses TERMite json payload into records, includes rules to filter out ambiguous and low-relevance hits.
+    Parses TERMite json payload into records, includes rules to filter out ambiguous and low-relevance hits
 
     :param response_payload: REP_PAYLOAD of JSON TERMite response
     :param reject_ambig: boolean
@@ -391,7 +379,7 @@ def json_payload_records(response_payload, reject_ambig=True, score_cutoff=0, re
 
 def payload_records(termiteResponse, reject_ambig=True, score_cutoff=0, remove_subsumed=True):
     """
-    Parses TERMite JSON or doc.JSONx output into records format.
+    Parses TERMite JSON or doc.JSONx output into records format
 
     :param termiteResponse: JSON or doc.JSONx TERMite response
     :param reject_ambig: boolean
@@ -419,9 +407,9 @@ def payload_records(termiteResponse, reject_ambig=True, score_cutoff=0, remove_s
 def get_termite_dataframe(termiteResponse, cols_to_add="", reject_ambig=True, score_cutoff=0,
                           remove_subsumed=True):
     """
-    Parses TERMite JSON or doc.JSONx into a dataframe of hits, filtering out ambiguous and low-relevance hits.
-    By default returns docID, entityType, hitID, name, score, realSynList, totnosyns, nonambigsyns, frag_vector_array.
-    Additional hit information not included in the default output can be included by use of a comma separated list.
+    Parses TERMite JSON or doc.JSONx into a dataframe of hits, filtering out ambiguous and low-relevance hits
+    By default returns docID, entityType, hitID, name, score, realSynList, totnosyns, nonambigsyns, frag_vector_array
+    Additional hit information not included in the default output can be included by use of a comma separated list
 
     :param termiteResponse: JSON or doc.JSONx response from TERMite
     :param cols_to_add: comma separated list of additional fields to include
@@ -454,15 +442,15 @@ def get_termite_dataframe(termiteResponse, cols_to_add="", reject_ambig=True, sc
         return (df[cols])
 
 
-def get_entity_hits_from_docjsonx(termiteResponse, filter_entity_types):
+def get_entity_hits_from_docjsonx(termite_response, filter_entity_types):
     """
-    Parses doc.JSONx TERMite response and returns a summary of the hits.
+    Parses doc.JSONx TERMite response and returns a summary of the hits
 
-    :param termiteResponse: doc.JSONx TERMite response
+    :param termite_response: doc.JSONx TERMite response
     :param filter_entity_types: comma separated list
-    :return:
+    :return: dictionary of filtered hits
     """
-    processed = docjsonx_payload_records(termiteResponse)
+    processed = docjsonx_payload_records(termite_response)
 
     filtered_hits = {}
     for entity_hit in processed:
@@ -490,14 +478,14 @@ def get_entity_hits_from_docjsonx(termiteResponse, filter_entity_types):
     return (filtered_hits)
 
 
-def all_entities(termiteResponse):
+def all_entities(termite_response):
     """
-    Parses TERMite response and returns a list of VOCab modules with hits.
+    Parses TERMite response and returns a list of VOCab modules with hits
 
-    :param termiteResponse: JSON or doc.JSONx TERMite response
+    :param termite_response: JSON or doc.JSONx TERMite response
     :return: list
     """
-    payload = payload_records(termiteResponse)
+    payload = payload_records(termite_response)
 
     entities_used = []
     for entity_hit in payload:
@@ -507,69 +495,69 @@ def all_entities(termiteResponse):
     return (entities_used)
 
 
-def all_entities_df(termiteResponse):
+def all_entities_df(termite_response):
     """
     Parses JSON or doc.JSONx TERMite response into summary of hits dataframe
 
-    :param termiteResponse: JSON or doc.JSONx TERMite response
+    :param termite_response: JSON or doc.JSONx TERMite response
     :return: pandas dataframe
     """
 
     # identify all entitiy hit types in the text
-    entities_used = all_entities(termiteResponse)
+    entities_used = all_entities(termite_response)
     entities_string = (',').join(entities_used)
 
-    if "RESP_MULTIDOC_PAYLOAD" in termiteResponse or "RESP_PAYLOAD" in termiteResponse:
-        filtered_hits = get_entity_hits_from_json(termiteResponse, entities_string)
+    if "RESP_MULTIDOC_PAYLOAD" in termite_response or "RESP_PAYLOAD" in termite_response:
+        filtered_hits = get_entity_hits_from_json(termite_response, entities_string)
     else:
-        filtered_hits = get_entity_hits_from_docjsonx(termiteResponse, entities_string)
+        filtered_hits = get_entity_hits_from_docjsonx(termite_response, entities_string)
 
     df = pd.DataFrame(filtered_hits).T
 
     return (df)
 
 
-def entity_freq(termiteResponse):
+def entity_freq(termite_response):
     """
-    Parses TERMite JSON or doc.JSONx response and returns dataframe of entity type frequencies.
+    Parses TERMite JSON or doc.JSONx response and returns dataframe of entity type frequencies
 
-    :param termiteResponse: JSON or doc.JSONx TERMite response
+    :param termite_response: JSON or doc.JSONx TERMite response
     :return: pandas dataframe
     """
 
-    df = get_termite_dataframe(termiteResponse)
+    df = get_termite_dataframe(termite_response)
 
     values = pd.value_counts(df['entityType'])
     values = pd.DataFrame(values)
     return (values)
 
 
-def top_hits_df(termiteResponse, selection=10, entitySubset=None, includeDocs=False):
+def top_hits_df(termite_response, selection=10, entity_subset=None, include_docs=False):
     """
     Parses JSON or doc.JSONx TERMite response and returns a pandas dataframe of the most frequent hits. By default the
-    top 10 most frequent hits are returned. The entity types to include can be set by a comma separated list.
-    For multidoc results the documents in which hits occur can be included.
+    top 10 most frequent hits are returned. The entity types to include can be set by a comma separated list
+    For multidoc results the documents in which hits occur can be included
 
-    :param termiteResponse: JSON or doc.JSONx TERMite response
+    :param termite_response: JSON or doc.JSONx TERMite response
     :param selection: number of most frequent hits to return
-    :param entitySubset: comma separated list
-    :param includeDocs: boolean
+    :param entity_subset: comma separated list
+    :param include_docs: boolean
     :return: pandas dataframe
     """
 
     # get entity hits and sort by hit_count
-    df = get_termite_dataframe(termiteResponse)
+    df = get_termite_dataframe(termite_response)
     df.sort_values(by=['hitCount'], ascending=False, inplace=True)
     df2 = df.copy()
 
     # select relevant columns and filtering
-    if includeDocs is True:
+    if include_docs is True:
         columns = [3, 5, 6, 2, 1]
     else:
         columns = [3, 5, 6, 2]
-    if entitySubset is not None:
-        entitySubset = entitySubset.replace(" ", "").split(",")
-        criteria = df2['entityType'].isin(entitySubset)
+    if entity_subset is not None:
+        entity_subset = entity_subset.replace(" ", "").split(",")
+        criteria = df2['entityType'].isin(entity_subset)
         return (df2[criteria].iloc[0:selection, columns])
     else:
         return (df2.iloc[0:selection, columns])

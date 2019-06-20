@@ -23,7 +23,7 @@ import pandas as pd
 
 class TexpressRequestBuilder():
     """
-    Class for creating TEXPress requests.
+    Class for creating TEXPress requests
     """
 
     def __init__(self):
@@ -37,13 +37,12 @@ class TexpressRequestBuilder():
 
     def set_basic_auth(self, username='', password='', verification=True):
         """
-        Pass basic authentication credentials.
+        Pass basic authentication credentials
         **ONLY change verification if you are calling a known source**
 
         :param username: username to be used for basic authentication
         :param password: password to be used for basic authentication
-        :param verification: if set to False requests will ifnore verifying the SSL certificate, can also pass the path to a certfile
-        :return:
+        :param verification: if set to False requests will ignore verifying the SSL certificate, can also pass the path to a certfile
         """
         self.basic_auth = (username, password)
         self.verify_request = verification
@@ -53,17 +52,15 @@ class TexpressRequestBuilder():
         Set the URL of the TERMite instance e.g. for local instance http://localhost:9090/termite
 
         :param url: the URL of the TERMite instance to be hit
-        :return:
         """
         self.url = url
 
     def set_binary_content(self, input_file_path):
         """
         For annotating file content, send file path string and process file as a binary
-        multiple files of the same type can be scanned at once if placed in a zip archive.
+        multiple files of the same type can be scanned at once if placed in a zip archive
         
         :param input_file_path: file path to the file to be sent to TERMite
-        :return: 
         """
         file_obj = open(input_file_path, 'rb')
         file_name = os.path.basename(input_file_path)
@@ -74,7 +71,6 @@ class TexpressRequestBuilder():
         Use this for tagging raw text e.g. if looping through some file content
     
         :param string: text to be sent to TERMite
-        :return: 
         """
         self.payload["text"] = string
 
@@ -83,7 +79,6 @@ class TexpressRequestBuilder():
         For bulk setting multiple TERMite API options in a single call, send a dictionary object here
         
         :param options_dict: a dictionary of options to be passed to TERMite
-        :return: 
         """
         to_payload = ['output', 'bundle', 'pattern', 'method']
         options = []
@@ -109,7 +104,6 @@ class TexpressRequestBuilder():
         Use fuzzy matching?
         
         :param bool: set to True if fuzzy matching is to be enabled
-        :return: 
         """
         input = bool_to_string(bool)
         if "opts" in self.payload:
@@ -123,7 +117,6 @@ class TexpressRequestBuilder():
         If another TExpress hit full overlaps this hit, hits to this pattern are removed
         
         :param bool: set subsume if True
-        :return: 
         """
         input = bool_to_string(bool)
         self.payload["tx.subsumable"] = input
@@ -133,7 +126,6 @@ class TexpressRequestBuilder():
         Limit the entities to be annotated
         
         :param string: a comma separated string of entity types, e.g. 'DRUG,GENE'
-        :return: 
         """
         self.payload["entities"] = string
 
@@ -141,8 +133,7 @@ class TexpressRequestBuilder():
         """
         Set input format e.g. txt, medline.xml, node.xml, pdf, xlsx
         
-        :param string: 
-        :return: 
+        :param string:
         """
         self.payload["format"] = string
 
@@ -150,8 +141,7 @@ class TexpressRequestBuilder():
         """
         Set output format e.g. tsv, json, doc.json
         
-        :param string: 
-        :return: 
+        :param string:
         """
         self.payload["output"] = string
 
@@ -161,7 +151,6 @@ class TexpressRequestBuilder():
         also applies where there are multiple document records in a single xml e.g. from a medline XML export
         
         :param integer: number of documents to limit annotation too
-        :return: 
         """
         self.payload["maxDocs"] = integer
 
@@ -170,7 +159,6 @@ class TexpressRequestBuilder():
         Reject all documents where there were no hits
         
         :param bool: if True do not return any docs with no hits
-        :return: 
         """
         input = bool_to_string(bool)
         self.payload["noEmpty"] = input
@@ -180,7 +168,7 @@ class TexpressRequestBuilder():
         Once all settings are done, POST the parameters to the TERMite RESTful API
 
         :param display_request: if True request will be printed out before being submitted
-        :return:
+        :return: request response
         """
         if display_request:
             print("REQUEST: ", self.url, self.payload)
@@ -212,10 +200,9 @@ class TexpressRequestBuilder():
 
     def set_allow_ambiguous(self, bool):
         """
-        Allow matches containing ambiguous entity hits to be returned.
+        Allow matches containing ambiguous entity hits to be returned
 
-        :param bool:
-        :return:
+        :param bool: string boolean
         """
         input = bool_to_string(bool)
         if "opts" in self.payload:
@@ -225,58 +212,54 @@ class TexpressRequestBuilder():
 
     def set_alwaysadd(self, bool):
         """
-        Set input format e.g. txt, medline.xml, node.xml, pdf, xlsx
+        Always return an annotated sentence, even if no hit.
+        Note, use the pattern !ANNOTATE to obtain this without any pattern search
 
-        :param string:
-        :return:
+        :param string: string boolean
         """
         self.payload["alwaysAdd"] = bool_to_string(bool)
 
     def set_pivot(self, bool):
         """
-        Set input format e.g. txt, medline.xml, node.xml, pdf, xlsx
+        List TExpress hits by entity rather than document. Will result in redundant data and only works for some output
+        formats
 
-        :param string:
-        :return:
+        :param string: string boolean
         """
         self.payload["pivot"] = bool_to_string(bool)
 
     def set_tx_group(self, bool):
         """
-        Set input format e.g. txt, medline.xml, node.xml, pdf, xlsx
+        Capture entities matching non-spacer groups into a *group* parameter
 
-        :param string:
-        :return:
+        :param string: string boolean
         """
         self.payload["tx.groups"] = bool_to_string(bool)
 
     def set_bundle(self, bundle_name):
         """
         Provide a bundle to be used during TExpress search.
-        Please ensure that this bunndle is loaded on the server which you are calling.
+        Please ensure that this bundle is loaded on the server which you are calling
 
-        :param bundle_name:
-        :return:
+        :param bundle_name: name of the bundle you wish to call
         """
 
         self.payload["bundle"] = bundle_name
 
-    def set_pattern(self, bundle_name):
+    def set_pattern(self, pattern):
         """
         Provide a pattern to be used during TExpress search.
 
-        :param bundle_name:
-        :return:
+        :param pattern: pattern string
         """
 
-        self.payload["pattern"] = bundle_name
+        self.payload["pattern"] = pattern
 
     def set_reverse(self, bool):
         """
         Should we look for this reverse version of this pattern?
 
-        :param bundle_name:
-        :return:
+        :param bool: boolean look for reverse
         """
 
         input = bool_to_string(bool)
@@ -298,7 +281,6 @@ def bool_to_string(bool):
     Convert a boolean to a string
     
     :param bool: provide boolean to be converted
-    :return: 
     """
     string = str(bool)
     string = string.lower()
@@ -313,7 +295,6 @@ def annotate_files(url, input_file_path, options_dict):
     :param url: url of TERMite instance
     :param input_file_path: path to file to be annotated
     :param options_dict: dictionary of options to be used during annotation
-    :return: 
     """
     t = TexpressRequestBuilder()
     t.set_url(url)
@@ -329,9 +310,8 @@ def annotate_text(url, text, options_dict):
     Wrapper function to execute a TExpress request for annotating strings of text
     
     :param url: url of TERMite instance
-    :param input_file_path: path to file to be annotated
+    :param text: text to be annotated
     :param options_dict: dictionary of options to be used during annotation
-    :return: 
     """
     t = TexpressRequestBuilder()
     t.set_url(url)
@@ -353,7 +333,6 @@ def process_payload(texpress_hits, response_payload, doc_id='', score_cutoff=0,
     :param doc_id: document id
     :param score_cutoff: a numeric value between 1-5
     :param remove_subsumed: boolean
-    :return: 
     """
 
     for pattern_id in response_payload:
@@ -391,7 +370,6 @@ def get_entity_hits_from_json(termite_json_response, score_cutoff=0):
     
     :param termite_json_response: JSON returned from TExpress
     :param score_cutoff: a numeric value between 1-5
-    :return: 
     """
 
     filtered_hits = {}
@@ -415,8 +393,8 @@ def json_resp_records(json_resp_texpress, remove_subsumed=True):
     """
     parses JSON RESP_TEXPRESS into records, includes filter to remove subsumed hits.
 
+    :param remove_subsumed: remove the subsumed hits
     :param json_resp_texpress: RESP_TEXPRESS of TExpress JSON response
-    :param removeSubsumed: boolean
     :return: TExpress hits in records format
     """
 
@@ -446,7 +424,7 @@ def json_resp_records(json_resp_texpress, remove_subsumed=True):
 
 def docjsonx_records(docjsonx_response, remove_subsumed=True):
     """
-    Parses doc.JSONx TExpress into records, includes filter to remove subsumed hits.
+    Parses doc.JSONx TExpress into records, includes filter to remove subsumed hits
 
     :param docjsonx_response: TExpress doc.JSONx response
     :param remove_subsumed: boolean
@@ -474,7 +452,7 @@ def docjsonx_records(docjsonx_response, remove_subsumed=True):
 
 def texpress_records(texpress_response, remove_subsumed=True):
     """
-    Parses TExpress JSON or doc.JSONx response into records, with filtering to remove subsumed hits.
+    Parses TExpress JSON or doc.JSONx response into records, with filtering to remove subsumed hits
 
     :param texpress_response: TExpress JSON of doc.JSONx response
     :param remove_subsumed: boolean
@@ -491,6 +469,7 @@ def texpress_records(texpress_response, remove_subsumed=True):
 
 def get_texpress_dataframe(texpress_response, cols_to_add="", remove_subsumed=True):
     """
+    Get a dataframe from TEXpress response
 
     :param texpress_response:
     :param cols_to_add:
