@@ -8,18 +8,17 @@ Welcome to termite-toolkit's documentation!
 
 .. automodule:: termite_toolkit
 
-
-#1 -- termite
+#1 -- TERMite
 =========================
 
 .. automodule:: termite_toolkit.termite
    :members:
 
-#2 -- texpress
+#2 -- TExpress
 =============================
 
 .. automodule:: termite_toolkit.texpress
-   :members: 
+   :members:
 
 #3 -- utilities
 =============================
