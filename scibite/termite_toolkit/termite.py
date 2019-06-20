@@ -23,7 +23,7 @@ import pandas as pd
 
 class TermiteRequestBuilder():
     """
-    Class for creating TERMite requests.
+    Class for creating TERMite requests
     """
 
     def __init__(self):
@@ -37,7 +37,7 @@ class TermiteRequestBuilder():
 
     def set_basic_auth(self, username='', password='', verification=True):
         """
-        Pass basic authentication credentials.
+        Pass basic authentication credentials
         **ONLY change verification if you are calling a known source**
 
         :param username: username to be used for basic authentication
@@ -114,6 +114,7 @@ class TermiteRequestBuilder():
     def set_subsume(self, bool):
         """
         Take longest hit where an entity is a hit against more than one dictionary
+
         :param bool: set subsume if True
         """
         input = bool_to_string(bool)
@@ -218,7 +219,7 @@ def bool_to_string(bool):
 
 def annotate_files(url, input_file_path, options_dict):
     """
-    Wrapper function to execute a TExpress request for annotating individual files or a zip archive
+    Wrapper function to execute a TERMite request for annotating individual files or a zip archive
 
     :param url: url of TERMite instance
     :param input_file_path: path to file to be annotated
@@ -236,7 +237,7 @@ def annotate_files(url, input_file_path, options_dict):
 
 def annotate_text(url, text, options_dict):
     """
-    Wrapper function to execute a TExpress request for annotating strings of text
+    Wrapper function to execute a TERMite request for annotating strings of text
 
     :param url: url of TERMite instance
     :param input_file_path: path to file to be annotated

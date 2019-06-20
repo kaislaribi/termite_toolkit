@@ -23,7 +23,7 @@ import pandas as pd
 
 class TexpressRequestBuilder():
     """
-    Class for creating TEXPress requests
+    Class for creating TEXpress requests
     """
 
     def __init__(self):
@@ -328,7 +328,7 @@ def process_payload(texpress_hits, response_payload, doc_id='', score_cutoff=0,
     Parses the termite json output to filter out only entity types of interest and their major metadata
     includes rules for rejecting ambiguous or low-relevance hits
     
-    :param texpress_hits: texpress hits to be processed
+    :param texpress_hits: TExpress hits to be processed
     :param response_payload: total payload
     :param doc_id: document id
     :param score_cutoff: a numeric value between 1-5
