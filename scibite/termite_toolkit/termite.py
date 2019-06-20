@@ -109,6 +109,7 @@ class TermiteRequestBuilder():
             self.payload["opts"] = "fzy.promote=" + input + "&" + self.payload["opts"]
         else:
             self.payload["opts"] = "fzy.promote=" + input
+
         self.payload["fuzzy"] = input
 
     def set_subsume(self, bool):

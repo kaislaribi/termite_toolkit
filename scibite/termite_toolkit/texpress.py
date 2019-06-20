@@ -471,9 +471,9 @@ def get_texpress_dataframe(texpress_response, cols_to_add="", remove_subsumed=Tr
     """
     Get a dataframe from TEXpress response
 
-    :param texpress_response:
-    :param cols_to_add:
-    :param remove_subsumed:
+    :param texpress_response: texpress JSON response
+    :param cols_to_add: additional column names to be included
+    :param remove_subsumed: remove subsumed pattern hits
     :return:
     """
 
