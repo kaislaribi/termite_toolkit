@@ -21,7 +21,6 @@ import os
 import pandas as pd
 
 
-
 class TermiteRequestBuilder():
     """
     Class for creating TERMite requests.
@@ -574,6 +573,3 @@ def top_hits_df(termiteResponse, selection=10, entitySubset=None, includeDocs=Fa
         return (df2[criteria].iloc[0:selection, columns])
     else:
         return (df2.iloc[0:selection, columns])
-
-
-
