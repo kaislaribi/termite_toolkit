@@ -14,8 +14,8 @@ __version__ = '0.2'
 __copyright__ = '(c) 2019, SciBite Ltd'
 __license__ = 'Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License'
 
+import termite_toolkit.termite as termite
 import json
-import termite
 
 
 def get_hits(termiteTags, hierarchy=None, vocabs=None):
