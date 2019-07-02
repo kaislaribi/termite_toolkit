@@ -1,18 +1,17 @@
 """
-.d8888.  .o88b. d888888b d8888b. d888888b d888888b d88888b       .d8b.  d888888b 
-88'  YP d8P  Y8   `88'   88  `8D   `88'   `~~88~~' 88'          d8' `8b   `88'   
-`8bo.   8P         88    88oooY'    88       88    88ooooo.     88ooo88    88    
-  `Y8b. 8b         88    88~~~b.    88       88    88~~~~~.     88~~~88    88    
-db   8D Y8b  d8   .88.   88   8D   .88.      88    88.          88   88   .88.   
-`8888Y'  `Y88P' Y888888P Y8888P' Y888888P    YP    Y88888P      YP   YP Y888888P 
-                                                                              
-                                                                              
- .o88b. db      d88888b  .d8b.  d8b   db .d8888. d888888b d8b   db  d888b  
-d8P  Y8 88      88'     d8' `8b 888o  88 88'  YP   `88'   888o  88 88' Y8b 
-8P      88      88ooooo 88ooo88 88V8o 88 `8bo.      88    88V8o 88 88      
-8b      88      88~~~~~ 88~~~88 88 V8o88   `Y8b.    88    88 V8o88 88  ooo 
-Y8b  d8 88booo. 88.     88   88 88  V888 db   8D   .88.   88  V888 88. ~8~ 
- `Y88P' Y88888P Y88888P YP   YP VP   V8P `8888Y' Y888888P VP   V8P  Y888P  
+ .|'''.|           ||  '||''|.    ||    .                  |     '||' 
+ ||..  '    ....  ...   ||   ||  ...  .||.    ....        |||     ||  
+  ''|||.  .|   ''  ||   ||'''|.   ||   ||   .|...||      |  ||    ||  
+.     '|| ||       ||   ||    ||  ||   ||   ||          .''''|.   ||  
+|'....|'   '|...' .||. .||...|'  .||.  '|.'  '|...'    .|.  .||. .||. 
+                                                                      
+                                                                      
+  ..|'''.| '||                                   ||                   
+.|'     '   ||    ....   ....   .. ...    ....  ...  .. ...     ... . 
+||          ||  .|...|| '' .||   ||  ||  ||. '   ||   ||  ||   || ||  
+'|.      .  ||  ||      .|' ||   ||  ||  . '|..  ||   ||  ||    |''   
+ ''|....'  .||.  '|...' '|..'|' .||. ||. |'..|' .||. .||. ||.  '||||. 
+                                                              .|....' 
 
 Preprocessing functions- using your TERMite output to make AI-ready data
 
@@ -31,24 +30,29 @@ def get_hits(termiteTags, hierarchy=None, vocabs=None):
 	hits = []
 	for hit in termiteTags:
 		if not vocabs:
-			if entityType not in hierarchy:
-				hierarchy[entityType] = len(hierarchy)
+			if hit['entityType'] not in hierarchy:
+				hierarchy[hit['entityType']] = len(hierarchy)
+		else:
+			if hit['entityType'] not in vocabs:
+				continue
 
 		hitLocs, subsumeStates = hit['exact_array'], hit['subsume']
 		assert len(hitLocs) == len(subsumeStates)
 
 		for idx, hitLoc in enumerate(hitLocs):
+			if hitLoc['fls'][0] < 1:
+				continue
 			hitInfo = {}
 			hitInfo['entityType'], hitInfo['entityID'], hitInfo['entityName'] = hit['entityType'], hit['hitID'], hit['name']
 			breakBool = False
 			hitInfo['startLoc'], hitInfo['endLoc'] = hitLoc['fls'][1], hitLoc['fls'][2]
 			if subsumeStates[idx] == False: #If hit is not subsumed...
-				for hitIdx, hit in enumerate(hits):
+				for hitIdx, hit_ in enumerate(hits):
 					#Compare to already found hits to check there's no conflict
-					if ((hit['endLoc'] >= hitInfo['startLoc'] and hit['endLoc'] <= hitInfo['endLoc']) or
-						(hit['startLoc'] >= hitInfo['startLoc'] and hit['startLoc'] <= hitInfo['endLoc'])):
+					if ((hit_['endLoc'] >= hitInfo['startLoc'] and hit_['endLoc'] <= hitInfo['endLoc']) or
+						(hit_['startLoc'] >= hitInfo['startLoc'] and hit_['startLoc'] <= hitInfo['endLoc'])):
 						#If they overlap, check their position in the hierarchy
-						if hierarchy[hit['entityType']] >= hierarchy[hitInfo['entityType']]:
+						if hierarchy[hit_['entityType']] >= hierarchy[hitInfo['entityType']]:
 							del hits[hitIdx]
 							break
 						else:
@@ -89,7 +93,6 @@ def markup(docjsonx, normalisation='id', substitute=True, wrap=False,
 		if labels not in ['word', 'char']:
 			raise ValueError('labels, if specified, must be either \'word\' or \'char\'')
 	
-	substitutions = []
 	hierarchy = {}
 	if vocabs:
 		for idx, vocab in enumerate(vocabs):
@@ -103,10 +106,14 @@ def markup(docjsonx, normalisation='id', substitute=True, wrap=False,
 	for docIdx, doc in enumerate(j):
 		text = doc['body']
 
-		substitutions = get_hits(doc['termiteTags'], hierarchy=hierarchy, vocabs=vocabs)
+		try:
+			substitutions = get_hits(doc['termiteTags'], hierarchy=hierarchy, vocabs=vocabs)
+		except KeyError:
+			results[docIdx] = {'termited_text': text}
+			continue
 
 		if len(substitutions) > 0:
-			substitutions.sort(key=lambda x: x['endLoc'])
+			substitutions.sort(key=lambda x: x['startLoc'])
 			substitutions = reversed(substitutions)
 
 		if wrap:
@@ -178,7 +185,7 @@ def text_markup(text, termiteAddr='http://localhost:9090/termite', vocabs=['GENE
 		wrapChars=wrapChars, substitute=substitute, replacementDict=replacementDict)[0]['termited_text']
 
 
-def label(docjsonx, labelLevel='word', vocabs=None):
+def label(docjsonx, vocabs, labelLevel='word'):
 	'''
 	Receives TERMite output docjsonx and returns split text with labels as to what entities are found in that part of the text.
 	
@@ -192,9 +199,8 @@ def label(docjsonx, labelLevel='word', vocabs=None):
 	results = {}
 	substitutions = []
 	hierarchy = {}
-	if vocabs:
-		for idx, vocab in enumerate(vocabs):
-			hierarchy[vocab] = idx
+	for idx, vocab in enumerate(vocabs):
+		hierarchy[vocab] = idx
 
 	if isinstance(docjsonx, str):
 		j = json.loads(docjsonx)
@@ -211,7 +217,11 @@ def label(docjsonx, labelLevel='word', vocabs=None):
 			splitText = list(text)
 		labels = [0 for i in splitText]
 
-		hits = get_hits(doc['termiteTags'], hierarchy=hierarchy, vocabs=vocabs)
+		try:
+			hits = get_hits(doc['termiteTags'], hierarchy=hierarchy, vocabs=vocabs)
+		except KeyError:
+			results[docIdx] = {'split_text': splitText, 'labels':labels}
+			continue
 
 		for hit in hits:
 			if labelLevel == 'char':
