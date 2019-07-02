@@ -22,7 +22,13 @@ Welcome to termite-toolkit's documentation!
 .. automodule:: termite_toolkit.texpress
    :members:
 
-#3 -- utilities
+#3 -- prep
+=============================
+
+.. automodule:: termite_toolkit.prep
+   :members:
+
+#4 -- utilities
 =============================
 
 .. automodule:: termite_toolkit.utilities
