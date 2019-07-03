@@ -175,7 +175,7 @@ class TermiteRequestBuilder():
         input = bool_to_string(bool)
         self.payload["noEmpty"] = input
 
-    def execute(self, display_request=False):
+    def execute(self, display_request=False, return_text=False):
         """
         Once all settings are done, POST the parameters to the TERMite RESTful API
 
@@ -199,7 +199,7 @@ class TermiteRequestBuilder():
                 "Failed with the following error {}\n\nPlease check that TERMite can be accessed via the following URL {}\nAnd that the necessary credentials have been provided (done so using the set_basic_auth() function)".format(
                     e, self.url))
 
-        if "json" in self.payload["output"]:
+        if "json" in self.payload["output"] and not return_text:
             return response.json()
         else:
             return response.text

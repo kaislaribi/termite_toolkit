@@ -25,6 +25,7 @@ entities = "INDICATION,HUCELL,GENE,DRUG"
 
 # build the request
 t = termite.TermiteRequestBuilder()
+t.set_input_format("csv")
 t.set_url(termite_home)
 t.set_binary_content(input_file)
 t.set_subsume(True)
